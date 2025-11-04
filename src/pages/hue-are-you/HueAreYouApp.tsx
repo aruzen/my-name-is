@@ -10,6 +10,7 @@ const HueAreYouApp: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('start')
   const [assignments, setAssignments] = useState<Record<string, string>>({})
   const [userName, setUserName] = useState('')
+  const [sessionId, setSessionId] = useState(0)
 
   const handleStart = () => {
     setCurrentScreen('selection')
@@ -35,6 +36,8 @@ const HueAreYouApp: React.FC = () => {
 
   const handleRestart = () => {
     setAssignments({})
+    setUserName('')
+    setSessionId((id) => id + 1)
     setCurrentScreen('start')
   }
 
@@ -51,7 +54,8 @@ const HueAreYouApp: React.FC = () => {
           <StartScreen onStart={handleStart} />
         )}
         {currentScreen === 'selection' && (
-          <SelectionScreen 
+          <SelectionScreen
+            key={sessionId}
             onComplete={handleComplete}
             onBack={handleBack}
           />

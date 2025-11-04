@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { colorToHex } from '../../../data/colors'
 import './ResultScreen.css'
 
@@ -9,15 +10,16 @@ interface ResultScreenProps {
   onSave: (name: string) => Promise<void>
 }
 
-const ResultScreen: React.FC<ResultScreenProps> = ({ 
-  assignments, 
-  userName, 
-  onRestart, 
-  onSave 
+const ResultScreen: React.FC<ResultScreenProps> = ({
+  assignments,
+  userName,
+  onRestart,
+  onSave
 }) => {
   const [name, setName] = useState(userName)
   const [isSaving, setIsSaving] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const navigate = useNavigate()
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -110,9 +112,9 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           <button className="restart-button" onClick={onRestart}>
             もう一度やる
           </button>
-          <button 
-            className="home-button" 
-            onClick={() => window.location.href = '/'}
+          <button
+            className="home-button"
+            onClick={() => navigate('/')}
           >
             ホームに戻る
           </button>
