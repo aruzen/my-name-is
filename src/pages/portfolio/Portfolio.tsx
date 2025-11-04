@@ -150,6 +150,12 @@ const Portfolio: React.FC = () => {
     const track = backgroundTrackRef.current
     if (!track) return
 
+    const getHeaderHeight = () => {
+      const rawValue = getComputedStyle(document.documentElement).getPropertyValue('--header-height')
+      const parsedValue = Number.parseFloat(rawValue)
+      return Number.isNaN(parsedValue) ? 0 : parsedValue
+    }
+
     const scrollFn = (index: number, options: ScrollBackgroundOptions = {}) => {
       const backgrounds = track.childElementCount || 0
       if (backgrounds === 0) {
@@ -157,18 +163,22 @@ const Portfolio: React.FC = () => {
       }
 
       const clampedIndex = Math.max(0, Math.min(index, backgrounds - 1))
+      const headerHeight = getHeaderHeight()
+      const visibleHeight = Math.max(0, window.innerHeight - headerHeight)
+      const translateDistance = clampedIndex * visibleHeight
+      const transformValue = `translate3d(0, -${translateDistance}px, 0)`
 
       if (options.behavior === 'auto' || options.behavior === 'instant') {
         const previousTransition = track.style.transition
         track.style.transition = 'none'
-        track.style.transform = `translate3d(0, -${clampedIndex * 100}vh, 0)`
+        track.style.transform = transformValue
         // Force reflow to re-enable transitions on the next frame
         void track.offsetHeight
         track.style.transition = previousTransition
         return
       }
 
-      track.style.transform = `translate3d(0, -${clampedIndex * 100}vh, 0)`
+      track.style.transform = transformValue
     }
 
     window.scrollBackground = scrollFn
