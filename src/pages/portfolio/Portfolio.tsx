@@ -40,6 +40,7 @@ const Portfolio: React.FC = () => {
   const skillsCanvasRef = useRef<HTMLCanvasElement>(null)
   const portfolioCanvasRef = useRef<HTMLCanvasElement>(null)
   const backgroundTrackRef = useRef<HTMLDivElement>(null)
+  const portfolioContentRef = useRef<HTMLDivElement>(null)
 
   const careerData: CareerItem[] = [
     { year: '2019年度', description: '神奈川総合産業高等学校 入学' },
@@ -185,8 +186,53 @@ const Portfolio: React.FC = () => {
 
     window.scrollBackground = scrollFn
 
+    // ensure the background starts aligned with the first section without animation
+    scrollFn(0, { behavior: 'instant' })
+
     return () => {
       delete window.scrollBackground
+    }
+  }, [])
+
+  useEffect(() => {
+    const content = portfolioContentRef.current
+    if (!content) return
+
+    let animationFrame: number | null = null
+
+    const syncBackground = () => {
+      const viewportHeight = window.innerHeight || 1
+      const index = Math.round(content.scrollTop / viewportHeight)
+      window.scrollBackground?.(index)
+    }
+
+    const handleScroll = () => {
+      if (animationFrame !== null) {
+        return
+      }
+
+      animationFrame = window.requestAnimationFrame(() => {
+        syncBackground()
+        animationFrame = null
+      })
+    }
+
+    const handleResize = () => {
+      syncBackground()
+    }
+
+    content.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize)
+
+    // align backgrounds with initial position
+    syncBackground()
+
+    return () => {
+      content.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame)
+      }
     }
   }, [])
 
@@ -199,7 +245,7 @@ const Portfolio: React.FC = () => {
           <canvas ref={portfolioCanvasRef} className="portfolio-background-layer" />
         </div>
       </div>
-      <div className="portfolio-content">
+      <div className="portfolio-content" ref={portfolioContentRef}>
         <section className="intro-section">
           <div className="section-content">
             <div className="intro-header">
