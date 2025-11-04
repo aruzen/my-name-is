@@ -202,8 +202,10 @@ const Portfolio: React.FC = () => {
 
     const syncBackground = () => {
       const viewportHeight = window.innerHeight || 1
-      const index = Math.round(content.scrollTop / viewportHeight)
-      window.scrollBackground?.(index)
+      const roughIndex = Math.round(content.scrollTop / viewportHeight)
+      const maxIndex = Math.max(0, content.childElementCount - 1)
+      const clampedIndex = Math.min(Math.max(roughIndex, 0), maxIndex)
+      window.scrollBackground?.(clampedIndex)
     }
 
     const handleScroll = () => {
