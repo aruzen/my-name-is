@@ -1,6 +1,16 @@
 import React, { useRef, useEffect } from 'react'
 import './Portfolio.css'
 
+declare global {
+  interface Window {
+    scrollBackground?: (index: number, options?: ScrollBackgroundOptions) => void
+  }
+}
+
+interface ScrollBackgroundOptions {
+  behavior?: ScrollBehavior
+}
+
 interface CareerItem {
   year: string
   description: string
@@ -29,7 +39,8 @@ const Portfolio: React.FC = () => {
   const introCanvasRef = useRef<HTMLCanvasElement>(null)
   const skillsCanvasRef = useRef<HTMLCanvasElement>(null)
   const portfolioCanvasRef = useRef<HTMLCanvasElement>(null)
-  const portfolioRef = useRef<HTMLDivElement>(null)
+  const backgroundTrackRef = useRef<HTMLDivElement>(null)
+  const portfolioContentRef = useRef<HTMLDivElement>(null)
 
   const careerData: CareerItem[] = [
     { year: '2019年度', description: '神奈川総合産業高等学校 入学' },
@@ -118,117 +129,231 @@ const Portfolio: React.FC = () => {
   ]
 
   useEffect(() => {
+    const canvases = [
+      { ref: introCanvasRef, color: '#2c3e50' },
+      { ref: skillsCanvasRef, color: '#4f9582ff' },
+      { ref: portfolioCanvasRef, color: '#3498db' }
+    ]
+
     const initCanvas = (canvas: HTMLCanvasElement | null, color: string) => {
       if (!canvas) return
       const ctx = canvas.getContext('2d')
       if (!ctx) return
-      
-      canvas.width = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-      
+
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+
       ctx.fillStyle = color
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
-    initCanvas(introCanvasRef.current, '#2c3e50')
-    initCanvas(skillsCanvasRef.current, '#4f9582ff') 
-    initCanvas(portfolioCanvasRef.current, '#3498db')
+    const drawAll = () => {
+      canvases.forEach(({ ref, color }) => initCanvas(ref.current, color))
+    }
 
+    drawAll()
+    window.addEventListener('resize', drawAll)
+
+    return () => {
+      window.removeEventListener('resize', drawAll)
+    }
+  }, [])
+
+  useEffect(() => {
+    const track = backgroundTrackRef.current
+    if (!track) return
+
+    const scrollFn = (index: number, options: ScrollBackgroundOptions = {}) => {
+      const backgrounds = track.childElementCount || 0
+      if (backgrounds === 0) {
+        return
+      }
+
+      const clampedIndex = Math.max(0, Math.min(index, backgrounds - 1))
+
+      if (options.behavior === 'auto' || options.behavior === 'instant') {
+        const previousTransition = track.style.transition
+        track.style.transition = 'none'
+        track.style.transform = `translate3d(0, -${clampedIndex * 100}vh, 0)`
+        // Force reflow to re-enable transitions on the next frame
+        void track.offsetHeight
+        track.style.transition = previousTransition
+        return
+      }
+
+      track.style.transform = `translate3d(0, -${clampedIndex * 100}vh, 0)`
+    }
+
+    window.scrollBackground = scrollFn
+
+    // ensure the background starts aligned with the first section without animation
+    scrollFn(0, { behavior: 'instant' })
+
+    return () => {
+      delete window.scrollBackground
+    }
+  }, [])
+
+  useEffect(() => {
+    const content = portfolioContentRef.current
+    if (!content) return
+
+    let animationFrame: number | null = null
+
+    const syncBackground = () => {
+      const sectionElements = Array.from(content.children).filter(
+        (child): child is HTMLElement => child instanceof HTMLElement
+      )
+
+      if (sectionElements.length === 0) {
+        return
+      }
+
+      const pivot = content.scrollTop + content.clientHeight / 2
+
+      let activeIndex = sectionElements.findIndex((section) => {
+        const top = section.offsetTop
+        const bottom = top + section.offsetHeight
+        return pivot >= top && pivot < bottom
+      })
+
+      if (activeIndex === -1) {
+        activeIndex = pivot < sectionElements[0].offsetTop ? 0 : sectionElements.length - 1
+      }
+
+      const clampedIndex = Math.min(Math.max(activeIndex, 0), sectionElements.length - 1)
+      window.scrollBackground?.(clampedIndex)
+    }
+
+    const handleScroll = () => {
+      if (animationFrame !== null) {
+        return
+      }
+
+      animationFrame = window.requestAnimationFrame(() => {
+        syncBackground()
+        animationFrame = null
+      })
+    }
+
+    const handleResize = () => {
+      syncBackground()
+    }
+
+    content.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize)
+
+    // align backgrounds with initial position
+    syncBackground()
+
+    return () => {
+      content.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame)
+      }
+    }
   }, [])
 
   return (
-    <div className="portfolio" ref={portfolioRef}>
-      <section className="intro-section">
-        <canvas ref={introCanvasRef} className="section-canvas" />
-        <div className="section-content">
-          <div className="intro-header">
-            <h2>自己紹介</h2>
-            <h3>森本 響 (Hibiki Morimoto)</h3>
-          </div>
-          <div className="career-section">
-            <h4>経歴</h4>
-            <ul className="career-list">
-              {careerData.map((item, index) => (
-                <li key={index} className="career-item">
-                  <span className="career-year">{item.year}</span>
-                  <span className="career-description">{item.description}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <div className="portfolio">
+      <div className="portfolio-background">
+        <div className="portfolio-background-track" ref={backgroundTrackRef}>
+          <canvas ref={introCanvasRef} className="portfolio-background-layer" />
+          <canvas ref={skillsCanvasRef} className="portfolio-background-layer" />
+          <canvas ref={portfolioCanvasRef} className="portfolio-background-layer" />
         </div>
-      </section>
+      </div>
+      <div className="portfolio-content" ref={portfolioContentRef}>
+        <section className="intro-section">
+          <div className="section-content">
+            <div className="intro-header">
+              <h2>自己紹介</h2>
+              <h3>森本 響 (Hibiki Morimoto)</h3>
+            </div>
+            <div className="career-section">
+              <h4>経歴</h4>
+              <ul className="career-list">
+                {careerData.map((item, index) => (
+                  <li key={index} className="career-item">
+                    <span className="career-year">{item.year}</span>
+                    <span className="career-description">{item.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
 
-      <section className="skills-section">
-        <canvas ref={skillsCanvasRef} className="section-canvas" />
-        <div className="section-content">
-          <h2>スキルセット</h2>
-          <div className="skills-grid">
-            {skillCategories.map((category, index) => (
-              <div key={index} className="skill-category">
-                <h3>{category.title}</h3>
-                <ul>
-                  {category.items.map((skill, skillIndex) => (
-                    <li key={skillIndex}>{skill}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            
-            <div className="tech-stacks">
-              {techStacks.map((tech, index) => (
-                <div key={index} className="tech-stack">
-                  <div className="tech-stack-header">
-                    {tech.icons && (
-                      <div className="tech-icons" aria-hidden="true">
-                        {tech.icons.map((icon, iconIndex) =>
-                          icon.type === 'devicon' && icon.className ? (
-                            <i key={iconIndex} className={`tech-icon ${icon.className}`} />
-                          ) : icon.type === 'simple' && icon.name ? (
-                            <img
-                              key={iconIndex}
-                              src={`https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${icon.name}.svg`}
-                              alt=""
-                              className="tech-icon"
-                              loading="lazy"
-                            />
-                          ) : null
-                        )}
-                      </div>
-                    )}
-                    <h3>{tech.name}</h3>
-                  </div>
-                  {tech.tools && (
-                    <div className="tech-detail">
-                      <strong>ツール:</strong> {tech.tools.join(', ')}
-                    </div>
-                  )}
-                  {tech.libraries && (
-                    <div className="tech-detail">
-                      <strong>ライブラリ/フレームワーク:</strong> {tech.libraries.join(', ')}
-                    </div>
-                  )}
-                  <div className="tech-detail">
-                    <strong>主な使用先:</strong> {tech.usage}
-                  </div>
+        <section className="skills-section">
+          <div className="section-content">
+            <h2>スキルセット</h2>
+            <div className="skills-grid">
+              {skillCategories.map((category, index) => (
+                <div key={index} className="skill-category">
+                  <h3>{category.title}</h3>
+                  <ul>
+                    {category.items.map((skill, skillIndex) => (
+                      <li key={skillIndex}>{skill}</li>
+                    ))}
+                  </ul>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="portfolio-section">
-        <canvas ref={portfolioCanvasRef} className="section-canvas" />
-        <div className="section-content">
-          <h2>制作物</h2>
-          <div className="portfolio-items">
-            <div className="portfolio-item-template">
-              <p>制作物は今後追加予定です</p>
+              <div className="tech-stacks">
+                {techStacks.map((tech, index) => (
+                  <div key={index} className="tech-stack">
+                    <div className="tech-stack-header">
+                      {tech.icons && (
+                        <div className="tech-icons" aria-hidden="true">
+                          {tech.icons.map((icon, iconIndex) =>
+                            icon.type === 'devicon' && icon.className ? (
+                              <i key={iconIndex} className={`tech-icon ${icon.className}`} />
+                            ) : icon.type === 'simple' && icon.name ? (
+                              <img
+                                key={iconIndex}
+                                src={`https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${icon.name}.svg`}
+                                alt=""
+                                className="tech-icon"
+                                loading="lazy"
+                              />
+                            ) : null
+                          )}
+                        </div>
+                      )}
+                      <h3>{tech.name}</h3>
+                    </div>
+                    {tech.tools && (
+                      <div className="tech-detail">
+                        <strong>ツール:</strong> {tech.tools.join(', ')}
+                      </div>
+                    )}
+                    {tech.libraries && (
+                      <div className="tech-detail">
+                        <strong>ライブラリ/フレームワーク:</strong> {tech.libraries.join(', ')}
+                      </div>
+                    )}
+                    <div className="tech-detail">
+                      <strong>主な使用先:</strong> {tech.usage}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section className="portfolio-section">
+          <div className="section-content">
+            <h2>制作物</h2>
+            <div className="portfolio-items">
+              <div className="portfolio-item-template">
+                <p>制作物は今後追加予定です</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   )
 }
