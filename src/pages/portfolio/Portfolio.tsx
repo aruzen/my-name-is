@@ -201,10 +201,27 @@ const Portfolio: React.FC = () => {
     let animationFrame: number | null = null
 
     const syncBackground = () => {
-      const viewportHeight = window.innerHeight || 1
-      const roughIndex = Math.round(content.scrollTop / viewportHeight)
-      const maxIndex = Math.max(0, content.childElementCount - 1)
-      const clampedIndex = Math.min(Math.max(roughIndex, 0), maxIndex)
+      const sectionElements = Array.from(content.children).filter(
+        (child): child is HTMLElement => child instanceof HTMLElement
+      )
+
+      if (sectionElements.length === 0) {
+        return
+      }
+
+      const pivot = content.scrollTop + content.clientHeight / 2
+
+      let activeIndex = sectionElements.findIndex((section) => {
+        const top = section.offsetTop
+        const bottom = top + section.offsetHeight
+        return pivot >= top && pivot < bottom
+      })
+
+      if (activeIndex === -1) {
+        activeIndex = pivot < sectionElements[0].offsetTop ? 0 : sectionElements.length - 1
+      }
+
+      const clampedIndex = Math.min(Math.max(activeIndex, 0), sectionElements.length - 1)
       window.scrollBackground?.(clampedIndex)
     }
 
