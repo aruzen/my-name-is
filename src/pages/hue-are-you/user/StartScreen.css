@@ -2,15 +2,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  padding: 2rem;
+  min-height: clamp(70vh, 90vh, 100vh);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
 }
 
 .start-container {
   text-align: center;
-  max-width: 600px;
+  width: min(600px, 100%);
   background: rgba(255, 255, 255, 0.1);
-  padding: 3rem;
+  padding: clamp(2rem, 6vw, 3rem);
   border-radius: 16px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -82,4 +82,41 @@
 
 .start-button:active {
   transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .start-container {
+    padding: clamp(1.75rem, 7vw, 2.25rem);
+  }
+
+  .start-container h1 {
+    font-size: clamp(2rem, 7vw, 2.3rem);
+  }
+
+  .start-container p {
+    font-size: 1.05rem;
+  }
+
+  .start-button {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .start-screen {
+    padding: 1.25rem;
+  }
+
+  .instructions {
+    padding: 1.25rem;
+  }
+
+  .instructions ul {
+    padding-left: 1rem;
+  }
+
+  .start-button {
+    font-size: 1.1rem;
+  }
 }

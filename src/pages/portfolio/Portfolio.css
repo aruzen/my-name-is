@@ -1,3 +1,4 @@
+
 :root {
   --header-height: 80px;
 }
@@ -5,8 +6,10 @@
 .portfolio {
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: calc(100vh - var(--header-height));
   overflow: hidden;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.06), transparent 50%);
 }
 
 .portfolio-background {
@@ -37,12 +40,31 @@
   display: block;
 }
 
+@supports (height: 100dvh) {
+  .portfolio {
+    min-height: calc(100dvh - var(--header-height));
+  }
+
+  .portfolio-background {
+    height: calc(100dvh - var(--header-height));
+  }
+
+  .portfolio-background-layer {
+    height: 100dvh;
+  }
+
+  .portfolio-content {
+    height: 100dvh;
+  }
+}
+
 .portfolio-content {
   position: relative;
   z-index: 1;
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
+  scrollbar-gutter: stable both-edges;
 }
 
 .portfolio-content section {
@@ -61,7 +83,7 @@
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.95);
-  padding: 3rem;
+  padding: clamp(2rem, 4vw, 3rem);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
@@ -253,36 +275,102 @@
   border: 2px dashed #95a5a6;
 }
 
-@media (max-width: 768px) {
-  .portfolio-content section {
-    padding: 1rem;
+@media (max-width: 1024px) {
+  :root {
+    --header-height: 72px;
+  }
+
+  .portfolio {
     min-height: auto;
-    scroll-snap-align: start;
   }
-  
+
+  .portfolio-background {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    opacity: 0.25;
+  }
+
+  .portfolio-background-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .portfolio-background-layer {
+    height: auto;
+    min-height: 60vh;
+  }
+
+  .portfolio-content {
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-bottom: 3rem;
+  }
+
+  .portfolio-content section {
+    min-height: auto;
+    padding: clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 5vw, 2rem);
+    scroll-snap-align: unset;
+    scroll-snap-stop: unset;
+  }
+}
+
+@media (max-width: 768px) {
   .section-content {
-    padding: 2rem;
+    padding: clamp(1.5rem, 6vw, 2.25rem);
   }
-  
+
   .intro-header h2 {
     font-size: 2rem;
   }
-  
+
   .intro-header h3 {
     font-size: 1.4rem;
   }
-  
+
   .career-item {
     flex-direction: column;
+    align-items: flex-start;
   }
-  
+
   .career-year {
     flex: none;
     margin-right: 0;
     margin-bottom: 0.5rem;
   }
-  
+
   .tech-stacks {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .section-content {
+    padding: clamp(1.25rem, 7vw, 1.75rem);
+  }
+
+  .intro-header h2,
+  .skills-section .section-content h2,
+  .portfolio-section .section-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .intro-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .career-item {
+    padding: 0.85rem;
+  }
+
+  .tech-stack {
+    padding: 1.25rem;
+  }
+
+  .portfolio-item-template {
+    padding: 2rem;
   }
 }
