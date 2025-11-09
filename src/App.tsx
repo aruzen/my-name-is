@@ -24,6 +24,21 @@ function App() {
     setIsMobileMenuOpen(false)
   }, [location])
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 960) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   const handleNavClick = () => {
     setIsMobileMenuOpen(false)
   }
@@ -45,12 +60,18 @@ function App() {
               className={`hamburger-menu ${isMobileMenuOpen ? 'active' : ''}`}
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               aria-label="メニュー"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="primary-navigation"
+              type="button"
             >
               <span></span>
               <span></span>
               <span></span>
             </button>
-            <nav className={`nav ${isMobileMenuOpen ? 'nav-open' : ''}`}>
+            <nav
+              id="primary-navigation"
+              className={`nav ${isMobileMenuOpen ? 'nav-open' : ''}`}
+            >
               <ul>
                 <li>
                   <NavLink to="/" end className={navClassName} onClick={handleNavClick}>

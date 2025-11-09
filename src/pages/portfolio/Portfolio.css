@@ -1,11 +1,11 @@
 :root {
-  --header-height: 80px;
+  --header-height: clamp(70px, 6vw, 80px);
 }
 
 .portfolio {
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
 }
 
@@ -43,6 +43,7 @@
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
 .portfolio-content section {
@@ -51,8 +52,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  /* ensure each section has an explicit snap target so the background index stays in sync */
+  padding: clamp(1.5rem, 4vw, 2.5rem);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -61,25 +61,26 @@
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.95);
-  padding: 3rem;
-  border-radius: 12px;
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   width: 100%;
   backdrop-filter: blur(10px);
 }
 
+
 .intro-header h2 {
   color: #2c3e50;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4.5vw, 2.5rem);
   margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .intro-header h3 {
   color: #34495e;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
+  font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  margin-bottom: clamp(1.25rem, 4vw, 2rem);
   text-align: center;
   font-weight: 300;
 }
@@ -97,12 +98,14 @@
   padding: 0;
 }
 
+
 .career-item {
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 1rem;
-  padding: 1rem;
+  padding: clamp(0.9rem, 3vw, 1.1rem);
   background: rgba(52, 152, 219, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   transition: transform 0.2s ease;
 }
 
@@ -111,8 +114,8 @@
 }
 
 .career-year {
-  flex: 0 0 120px;
-  font-weight: bold;
+  flex: 0 0 140px;
+  font-weight: 600;
   color: #3498db;
   margin-right: 1rem;
 }
@@ -120,6 +123,7 @@
 .career-description {
   flex: 1;
   color: #2c3e50;
+  min-width: 200px;
 }
 
 .skills-section .section-content h2 {
@@ -129,15 +133,16 @@
   text-align: center;
 }
 
+
 .skills-grid {
   display: grid;
-  gap: 2rem;
+  gap: clamp(1.25rem, 3vw, 2rem);
 }
 
 .skill-category {
-  background: rgba(236, 240, 241, 0.8);
-  padding: 1.5rem;
-  border-radius: 8px;
+  background: rgba(236, 240, 241, 0.85);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 12px;
   border-left: 4px solid #3498db;
 }
 
@@ -167,25 +172,28 @@
   left: 0;
 }
 
+
 .tech-stacks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1.25rem, 3vw, 1.75rem);
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
 }
 
 .tech-stack {
   background: rgba(231, 76, 60, 0.1);
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 12px;
   border-left: 4px solid #e74c3c;
 }
+
 
 .tech-stack-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .tech-stack h3 {
@@ -194,10 +202,61 @@
   margin: 0;
 }
 
+
 .tech-icons {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .portfolio-content {
+    height: auto;
+    min-height: 100vh;
+    scroll-snap-type: none;
+  }
+
+  .portfolio-content section {
+    min-height: auto;
+    padding: clamp(1.5rem, 5vw, 2rem) clamp(1rem, 5vw, 2rem);
+  }
+
+  .portfolio-background {
+    position: absolute;
+    top: 0;
+    height: 100%;
+  }
+
+  .portfolio {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .section-content {
+    padding: clamp(1.5rem, 5vw, 2rem);
+    border-radius: 14px;
+  }
+
+  .career-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .career-year {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .portfolio-background {
+    display: none;
+  }
+
+  .portfolio-content {
+    background: linear-gradient(135deg, rgba(210, 216, 241, 0.35), rgba(236, 225, 247, 0.35));
+  }
 }
 
 

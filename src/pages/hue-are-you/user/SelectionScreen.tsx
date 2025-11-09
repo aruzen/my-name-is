@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { getWords } from '../../../data/words'
 import { colors, colorToHex } from '../../../data/colors'
 import { WordColorAssignment, Color } from '../../../types'
@@ -12,13 +12,32 @@ interface SelectionScreenProps {
 const SelectionScreen: React.FC<SelectionScreenProps> = ({ onComplete, onBack }) => {
   const wordsToUse = getWords()
   const [assignments, setAssignments] = useState<WordColorAssignment[]>(
-    wordsToUse.map(word => ({ word, color: null }))
+    wordsToUse.map((word) => ({ word, color: null }))
   )
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [draggedWord, setDraggedWord] = useState<string | null>(null)
+  const [circleSize, setCircleSize] = useState(() => calculateCircleSize())
 
   const currentWord = assignments[currentWordIndex]
   const progress = ((currentWordIndex + 1) / wordsToUse.length) * 100
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCircleSize(calculateCircleSize())
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const radius = useMemo(() => {
+    const baseRadius = circleSize / 2
+    const offset = Math.min(90, baseRadius * 0.35)
+    return Math.max(baseRadius - offset, baseRadius * 0.55)
+  }, [circleSize])
 
   const handleColorSelect = useCallback((color: Color) => {
     const newAssignments = [...assignments]
@@ -81,12 +100,19 @@ const SelectionScreen: React.FC<SelectionScreenProps> = ({ onComplete, onBack })
 
       <div className="selection-content">
 
-        <div className="circular-layout">
+        <div
+          className="circular-layout"
+          style={{
+            width: circleSize,
+            height: circleSize
+          }}
+        >
           <div className="word-center">
-            <div 
+            <div
               className="current-word"
               draggable
               onDragStart={(e) => handleDragStart(e, currentWord.word)}
+              onDragEnd={() => setDraggedWord(null)}
             >
               {currentWord.word}
             </div>
@@ -102,7 +128,6 @@ const SelectionScreen: React.FC<SelectionScreenProps> = ({ onComplete, onBack })
           <div className="color-circle">
             {colors.map((color, index) => {
               const angle = (index * 360) / colors.length
-              const radius = 180
               const x = Math.cos((angle - 90) * Math.PI / 180) * radius
               const y = Math.sin((angle - 90) * Math.PI / 180) * radius
               
@@ -147,3 +172,20 @@ const SelectionScreen: React.FC<SelectionScreenProps> = ({ onComplete, onBack })
 }
 
 export default SelectionScreen
+
+function calculateCircleSize() {
+  if (typeof window === 'undefined') {
+    return 500
+  }
+
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  const widthBased = viewportWidth - 64
+  const heightBased = viewportHeight - 260
+  const maxSize = 520
+
+  const size = Math.min(maxSize, widthBased, heightBased)
+  return Math.max(280, size)
+}
+

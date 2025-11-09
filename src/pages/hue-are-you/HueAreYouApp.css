@@ -2,40 +2,37 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-bottom: clamp(1rem, 3vw, 2rem);
 }
 
 .animated-background {
   position: fixed;
   inset: 0;
   z-index: -1;
-
   background: linear-gradient(135deg, #d2d8f1 0%, #ece1f7 100%);
   animation: hueCycle 10s linear infinite;
 }
 
 @keyframes hueCycle {
-  0%   { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
-
-@keyframes colorCycle {
-  0%   { filter: blur(30%) hue-rotate(0deg); }
-  100% { filter: blur(30%) hue-rotate(360deg); }
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }
 
 .hue-are-you-content {
   position: relative;
   z-index: 1;
+  padding: 0 clamp(1rem, 4vw, 2rem);
 }
 
-/* パステル背景にグラデーションオーバーレイ */
 .hue-are-you-container::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: linear-gradient(
     45deg,
     rgba(255, 182, 193, 0.1) 0%,
@@ -45,4 +42,15 @@
     rgba(255, 218, 185, 0.1) 100%
   );
   z-index: 0;
+}
+
+@media (max-width: 640px) {
+  .hue-are-you-container {
+    padding-top: clamp(0.5rem, 4vw, 1rem);
+    padding-bottom: clamp(0.5rem, 4vw, 1rem);
+  }
+
+  .hue-are-you-content {
+    padding: 0 clamp(0.75rem, 4vw, 1.25rem);
+  }
 }
