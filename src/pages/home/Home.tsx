@@ -16,15 +16,20 @@ const buttonGroupStyle: CSSProperties = {
   marginTop: '2rem',
   display: 'flex',
   gap: '1rem',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  justifyContent: 'center'
 }
 
 const Home = () => {
   return (
     <main>
       <section id="home">
-        <h2>Welcome</h2>
-        <p>このサイトは現在開発中です。</p>
+        <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', textAlign: 'center' }}>
+          Welcome
+        </h2>
+        <p style={{ fontSize: 'clamp(1rem, 3.5vw, 1.1rem)', textAlign: 'center' }}>
+          このサイトは現在開発中です。
+        </p>
         <div style={buttonGroupStyle}>
           <Link
             to="/hue-are-you"
