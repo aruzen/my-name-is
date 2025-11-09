@@ -2,18 +2,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  padding: 2rem;
+  min-height: calc(100vh - var(--header-height));
+  padding: clamp(1.5rem, 5vw, 3rem);
+  box-sizing: border-box;
 }
 
 .start-container {
   text-align: center;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 3rem;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: min(640px, 100%);
+  background: rgba(255, 255, 255, 0.18);
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 24px 60px rgba(24, 32, 79, 0.1);
 }
 
 .start-container h1 {
@@ -41,10 +43,10 @@
 .instructions {
   text-align: left;
   margin: 2rem 0;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .instructions h3 {
@@ -64,8 +66,8 @@
 }
 
 .start-button {
-  font-size: 1.3rem;
-  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  padding: 0.85rem 2.75rem;
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
   border: none;
   border-radius: 50px;
@@ -73,6 +75,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: min(280px, 80%);
+  margin: 0 auto;
 }
 
 .start-button:hover {
@@ -82,4 +86,22 @@
 
 .start-button:active {
   transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .start-container h1 {
+    font-size: clamp(2rem, 9vw, 2.4rem);
+  }
+
+  .start-container p {
+    font-size: 1rem;
+  }
+
+  .instructions ul {
+    padding-left: 1.25rem;
+  }
+
+  .instructions li {
+    font-size: 0.95rem;
+  }
 }

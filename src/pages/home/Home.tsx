@@ -16,7 +16,8 @@ const buttonGroupStyle: CSSProperties = {
   marginTop: '2rem',
   display: 'flex',
   gap: '1rem',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  justifyContent: 'center'
 }
 
 const Home = () => {
