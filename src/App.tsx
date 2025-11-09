@@ -61,11 +61,6 @@ function App() {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/portfolio" className={navClassName} onClick={handleNavClick}>
-                    ポートフォリオ
-                  </NavLink>
-                </li>
-                <li>
                   <NavLink to="/toy-space" className={navClassName} onClick={handleNavClick}>
                     Toy Space
                   </NavLink>
