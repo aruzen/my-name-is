@@ -1,7 +1,7 @@
 .result-screen {
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1.5rem, 5vw, 2.75rem) clamp(1rem, 6vw, 2.5rem);
 }
 
 .result-header {
@@ -25,15 +25,16 @@
 
 .result-summary {
   display: grid;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  gap: clamp(1rem, 4vw, 1.75rem);
+  margin-bottom: clamp(2rem, 5vw, 3rem);
 }
 
 .color-group {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
 .color-header {
@@ -68,17 +69,17 @@
 }
 
 .word-tag {
-  background: rgba(255, 255, 255, 0.1);
-  color: #BBBBBB;
-  padding: 0.5rem 1rem;
+  background: rgba(230, 240, 255, 0.55);
+  color: #334155;
+  padding: 0.45rem 0.85rem;
   border-radius: 20px;
   font-size: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   transition: all 0.3s ease;
 }
 
 .word-tag:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(221, 231, 255, 0.8);
   transform: translateY(-1px);
 }
 
@@ -94,10 +95,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: clamp(1.5rem, 5vw, 2rem);
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
 }
 
 .name-input-group {
@@ -112,13 +114,13 @@
 }
 
 .name-input-group input {
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: inherit;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2933;
   font-size: 1rem;
-  min-width: 200px;
+  min-width: min(240px, 100%);
   text-align: center;
 }
 
@@ -160,64 +162,77 @@
   font-size: 1.1rem;
 }
 
+
 .action-buttons {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
 }
 
 .restart-button,
 .home-button {
-  padding: 1rem 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: inherit;
+  padding: 0.95rem 1.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2933;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
 }
 
 .restart-button:hover,
 .home-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(248, 250, 252, 0.9);
   transform: translateY(-2px);
 }
 
 .restart-button {
-  background: rgba(255, 107, 107, 0.2);
-  border-color: rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.18);
+  border-color: rgba(255, 107, 107, 0.38);
+  color: #742a2a;
 }
 
 .restart-button:hover {
-  background: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.28);
 }
 
-@media (max-width: 768px) {
-  .result-screen {
-    padding: 1rem;
+@media (max-width: 860px) {
+  .result-summary {
+    grid-template-columns: 1fr;
   }
-  
-  .result-header h1 {
-    font-size: 2rem;
-  }
-  
+
   .color-header {
     flex-wrap: wrap;
   }
-  
-  .action-buttons {
-    flex-direction: column;
+
+  .name-input-group input {
     width: 100%;
   }
-  
+}
+
+@media (max-width: 600px) {
+  .result-screen {
+    padding: clamp(1.25rem, 7vw, 1.75rem) clamp(0.75rem, 6vw, 1.5rem);
+  }
+
+  .result-header h1 {
+    font-size: 2rem;
+  }
+
+  .save-section {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
   .restart-button,
   .home-button {
     width: 100%;
-  }
-  
-  .name-input-group input {
-    min-width: 150px;
   }
 }

@@ -1,47 +1,17 @@
-import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-
-const buttonStyle: CSSProperties = {
-  display: 'inline-block',
-  padding: '1rem 2rem',
-  fontSize: '1.2rem',
-  border: 'none',
-  borderRadius: '8px',
-  color: 'white',
-  cursor: 'pointer',
-  textDecoration: 'none'
-}
-
-const buttonGroupStyle: CSSProperties = {
-  marginTop: '2rem',
-  display: 'flex',
-  gap: '1rem',
-  flexWrap: 'wrap'
-}
+import './Home.css'
 
 const Home = () => {
   return (
-    <main>
-      <section id="home">
+    <main className="page-main">
+      <section id="home" className="home-section">
         <h2>Welcome</h2>
         <p>このサイトは現在開発中です。</p>
-        <div style={buttonGroupStyle}>
-          <Link
-            to="/hue-are-you"
-            style={{
-              ...buttonStyle,
-              background: 'linear-gradient(45deg, #4ecdc4, #45b7d1)'
-            }}
-          >
+        <div className="home-actions">
+          <Link to="/hue-are-you" className="home-action home-action--primary">
             Hue Are You? を試す
           </Link>
-          <Link
-            to="/portfolio"
-            style={{
-              ...buttonStyle,
-              background: 'linear-gradient(45deg, #e74c3c, #c0392b)'
-            }}
-          >
+          <Link to="/portfolio" className="home-action home-action--secondary">
             ポートフォリオを見る
           </Link>
         </div>

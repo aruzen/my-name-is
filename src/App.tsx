@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import LoginModal, { type LoginModalState } from './components/LoginModal'
 import Home from './pages/home/Home'
@@ -17,10 +17,37 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState<string | null>(null)
   const location = useLocation()
+  const headerRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [location])
+
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0
+      document.documentElement.style.setProperty('--header-height', `${headerHeight}px`)
+    }
+
+    updateHeaderHeight()
+    window.addEventListener('resize', updateHeaderHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight)
+    }
+  }, [])
+
+  useEffect(() => {
+    const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`)
+  }, [location, isMobileMenuOpen])
+
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', isMobileMenuOpen)
+    return () => {
+      document.body.classList.remove('menu-open')
+    }
+  }, [isMobileMenuOpen])
 
   const handleNavClick = () => {
     setIsMobileMenuOpen(false)
@@ -28,7 +55,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header" ref={headerRef}>
         <div className="header-content">
           <div className="header-left">
             <img
@@ -43,12 +70,18 @@ function App() {
               className={`hamburger-menu ${isMobileMenuOpen ? 'active' : ''}`}
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               aria-label="メニュー"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="primary-navigation"
             >
               <span></span>
               <span></span>
               <span></span>
             </button>
-            <nav className={`nav ${isMobileMenuOpen ? 'nav-open' : ''}`}>
+            <nav
+              id="primary-navigation"
+              className={`nav ${isMobileMenuOpen ? 'nav-open' : ''}`}
+              aria-label="主要メニュー"
+            >
               <ul>
                 <li>
                   <NavLink to="/" end className={navClassName} onClick={handleNavClick}>
