@@ -1,7 +1,9 @@
 .hue-are-you-container {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-height));
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .animated-background {
@@ -26,6 +28,11 @@
 .hue-are-you-content {
   position: relative;
   z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 3rem) clamp(1rem, 6vw, 4rem);
 }
 
 /* パステル背景にグラデーションオーバーレイ */
@@ -45,4 +52,10 @@
     rgba(255, 218, 185, 0.1) 100%
   );
   z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .hue-are-you-content {
+    padding: clamp(1rem, 4vw, 2.25rem) clamp(1rem, 6vw, 3rem);
+  }
 }
