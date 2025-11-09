@@ -1,7 +1,8 @@
 .result-screen {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  width: 100%;
 }
 
 .result-header {
@@ -27,6 +28,7 @@
   display: grid;
   gap: 1.5rem;
   margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .color-group {
@@ -196,28 +198,34 @@
 
 @media (max-width: 768px) {
   .result-screen {
-    padding: 1rem;
+    padding: clamp(1.1rem, 6vw, 1.6rem);
   }
-  
+
   .result-header h1 {
     font-size: 2rem;
   }
-  
+
   .color-header {
     flex-wrap: wrap;
   }
-  
+
   .action-buttons {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .restart-button,
   .home-button {
     width: 100%;
   }
-  
+
   .name-input-group input {
     min-width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .result-summary {
+    grid-template-columns: 1fr;
   }
 }
