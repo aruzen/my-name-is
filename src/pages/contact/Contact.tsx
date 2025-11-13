@@ -13,8 +13,8 @@ const Contact = () => {
           <li>ポートフォリオ: <NavLink to="/portfolio" className={navClassName}>
                     ポートフォリオ
                   </NavLink></li>
-          <li>メール: <a href="mailto:info@ahahacraft.example">info@ahahacraft.example</a></li>
-          <li>GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer">AhahaCraft</a></li>
+          <li>メール: <a href="mailto:mmhbk.byd@gmail.com">mmhbk.byd@gmail.com</a></li>
+          <li>GitHub: <a href="https://github.com/aruzen" target="_blank" rel="noopener noreferrer">AhahaCraft</a></li>
         </ul>
       </section>
     </main>

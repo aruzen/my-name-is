@@ -24,6 +24,33 @@ function App() {
     setIsMobileMenuOpen(false)
   }, [location])
 
+  useEffect(() => {
+    const headerElement = document.querySelector<HTMLElement>('.App-header')
+    if (!headerElement) {
+      return
+    }
+
+    const updateHeaderHeightVar = () => {
+      const { height } = headerElement.getBoundingClientRect()
+      document.documentElement.style.setProperty('--header-height', `${height}px`)
+    }
+
+    updateHeaderHeightVar()
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => updateHeaderHeightVar())
+        : null
+
+    resizeObserver?.observe(headerElement)
+    window.addEventListener('resize', updateHeaderHeightVar)
+
+    return () => {
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', updateHeaderHeightVar)
+    }
+  }, [])
+
   const handleNavClick = () => {
     setIsMobileMenuOpen(false)
   }
@@ -73,7 +100,7 @@ function App() {
                   </NavLink>
                 </li>
                 <li>
-                  <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/aruzen" target="_blank" rel="noopener noreferrer">
                     GitHub
                   </a>
                 </li>

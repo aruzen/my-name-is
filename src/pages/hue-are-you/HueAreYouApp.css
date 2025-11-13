@@ -25,7 +25,10 @@
 
 .hue-are-you-content {
   position: relative;
+  height: calc(100vh - var(--header-height, 0px));
+  min-height: calc(100vh - var(--header-height, 0px));
   z-index: 1;
+  overflow-y: auto;
 }
 
 /* パステル背景にグラデーションオーバーレイ */
