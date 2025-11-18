@@ -9,6 +9,7 @@ var (
 	ErrInvalidToken        = errors.New("domain: invalid token")
 	ErrExpiredToken        = errors.New("domain: expired token")
 	ErrInvalidCredential   = errors.New("domain: invalid credential")
+	ErrInvalidPassword     = errors.New("domain: invalid password")
 	ErrInvalidSessionToken = errors.New("domain: invalid login session token")
 	ErrInvalidLoginSession = errors.New("domain: invalid login session")
 	ErrInvalidSessionData  = errors.New("domain: invalid session data")
