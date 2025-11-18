@@ -33,3 +33,5 @@ dist-ssr
 .claude/
 *.md
 !docs/**/*.md
+backend/env.sh
+backend/build/go_build_backend_cmd

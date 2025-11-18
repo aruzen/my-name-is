@@ -119,6 +119,7 @@ func (s LoginSession) HashedToken() string {
 	return s.token.String()
 }
 
+// Verify は保存済みハッシュと入力トークンを照合する。
 func (s LoginSession) Verify(token LoginSessionToken) error {
 	return bcrypt.CompareHashAndPassword([]byte(s.token.value), []byte(token.value))
 }

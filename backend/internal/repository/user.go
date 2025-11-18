@@ -42,10 +42,6 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email domain.Email) (d
 	return scanUser(row)
 }
 
-type rowScanner interface {
-	Scan(dest ...interface{}) error
-}
-
 func scanUser(row rowScanner) (domain.User, error) {
 	var (
 		id        uuid.UUID

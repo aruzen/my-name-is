@@ -22,6 +22,27 @@ func NewHueRecord(name Name, choices HueChoices) (HueRecord, error) {
 	}, nil
 }
 
+// NewHueRecordFromPersistence は永続化済みデータから HueRecord を再構築する。
+func NewHueRecordFromPersistence(id uuid.UUID, name Name, choices HueChoices) (HueRecord, error) {
+	if id == uuid.Nil {
+		return HueRecord{}, ErrInvalidChoice
+	}
+
+	if choices.Size() == 0 {
+		return HueRecord{}, ErrInvalidChoice
+	}
+
+	if name.String() == "" {
+		return HueRecord{}, ErrEmptyName
+	}
+
+	return HueRecord{
+		id:      id,
+		name:    name,
+		choices: choices,
+	}, nil
+}
+
 // NewHueRecordFromRaw は生文字列を正規化して HueRecord を組み立てる。
 func NewHueRecordFromRaw(name string, raw map[string]string) (HueRecord, error) {
 	n, err := NewName(name)
