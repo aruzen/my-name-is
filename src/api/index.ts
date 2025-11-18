@@ -44,15 +44,33 @@ const buildUrl = (path: string, searchParams?: Record<string, string | number | 
   return url.toString()
 }
 
+interface ApiErrorResponseBody {
+  error?: string
+  field?: string
+  message?: string
+}
+
+interface ApiErrorInit {
+  status: number
+  message: string
+  payload?: unknown
+  code?: string
+  field?: string
+}
+
 export class ApiError extends Error {
   status: number
   payload?: unknown
+  code?: string
+  field?: string
 
-  constructor(status: number, message: string, payload?: unknown) {
+  constructor({ status, message, payload, code, field }: ApiErrorInit) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.payload = payload
+    this.code = code
+    this.field = field
   }
 }
 
@@ -99,22 +117,30 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const data = text ? safeJsonParse(text) : null
 
   if (!response.ok) {
-    const messageCandidates =
-      data && typeof data === 'object'
-        ? [
-            'message' in data && typeof (data as Record<string, unknown>).message === 'string'
-              ? (data as Record<string, string>).message
-              : null,
-            'error' in data && typeof (data as Record<string, unknown>).error === 'string'
-              ? (data as Record<string, string>).error
-              : null,
-          ]
-        : []
-
     const fallbackMessage = `API request failed with status ${response.status}`
-    const message = messageCandidates.find((candidate): candidate is string => Boolean(candidate)) ?? fallbackMessage
+    let message = fallbackMessage
+    let code: string | undefined
+    let field: string | undefined
 
-    throw new ApiError(response.status, message, data ?? undefined)
+    if (data && typeof data === 'object') {
+      const errorBody = data as Partial<ApiErrorResponseBody>
+      if (typeof errorBody.message === 'string' && errorBody.message.trim().length > 0) {
+        message = errorBody.message
+      } else if (typeof errorBody.error === 'string' && errorBody.error.trim().length > 0) {
+        message = errorBody.error
+      }
+
+      code = typeof errorBody.error === 'string' ? errorBody.error : undefined
+      field = typeof errorBody.field === 'string' ? errorBody.field : undefined
+    }
+
+    throw new ApiError({
+      status: response.status,
+      message,
+      payload: data ?? undefined,
+      code,
+      field,
+    })
   }
 
   return (data ?? undefined) as T

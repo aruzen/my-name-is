@@ -35,3 +35,4 @@ dist-ssr
 !docs/**/*.md
 backend/env.sh
 backend/build/go_build_backend_cmd
+backend/build/go_build_backend_cmd_for__linux

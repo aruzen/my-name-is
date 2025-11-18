@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type MouseEvent } from 'react'
-import { loginAdmin, signInAdmin } from '../api'
+import { ApiError, loginAdmin, signInAdmin } from '../api'
 import './LoginModal.css'
 
 export type LoginModalState = 'login' | 'signup' | null
@@ -62,8 +62,15 @@ const LoginModal = ({ modalState, onClose, onLogin }: LoginModalProps) => {
       setPassword('')
       setConfirmPassword('')
     } catch (error) {
-      const message = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-      alert(message)
+      if (state === 'signup' && error instanceof ApiError) {
+        const fieldLabel = error.field ? `[${error.field}] ` : ''
+        const duplicateHint = error.code === 'duplicate' ? '\n同じ情報のアカウントが既に存在します。' : ''
+        const detail = error.message || 'サインアップに失敗しました'
+        alert(`サインアップに失敗しました: ${fieldLabel}${detail}${duplicateHint}`)
+      } else {
+        const message = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
+        alert(message)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -102,6 +109,20 @@ const LoginModal = ({ modalState, onClose, onLogin }: LoginModalProps) => {
             />
           </div>
 
+          {state === 'signup' && (
+            <div className="form-group">
+              <label htmlFor="email">メールアドレス</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="メールアドレスを入力"
+                disabled={isLoading}
+              />
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="password">パスワード</label>
             <input
@@ -115,30 +136,17 @@ const LoginModal = ({ modalState, onClose, onLogin }: LoginModalProps) => {
           </div>
 
           {state === 'signup' && (
-            <>
-              <div className="form-group">
-                <label htmlFor="email">メールアドレス</label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="メールアドレスを入力"
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="confirmPassword">パスワード確認</label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="パスワードを再入力"
-                  disabled={isLoading}
-                />
-              </div>
-            </>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">パスワード確認</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="パスワードを再入力"
+                disabled={isLoading}
+              />
+            </div>
           )}
 
           <button 
