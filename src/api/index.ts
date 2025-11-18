@@ -7,11 +7,13 @@ import type {
   SessionData,
 } from './types'
 
-const DEFAULT_API_BASE_URL = 'https://www.ahaha-craft.org/api/'
+const DEFAULT_DEV_API_BASE_URL = 'http://localhost:8080/api/'
+const DEFAULT_PROD_API_BASE_URL = 'https://www.ahaha-craft.org/api/'
 
 const ensureTrailingSlash = (value: string) => (value.endsWith('/') ? value : `${value}/`)
 
-const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? DEFAULT_API_BASE_URL
+const fallbackBaseUrl = import.meta.env.DEV ? DEFAULT_DEV_API_BASE_URL : DEFAULT_PROD_API_BASE_URL
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? fallbackBaseUrl
 
 const resolvedBaseUrl = (() => {
   if (/^https?:\/\//i.test(rawBaseUrl)) {

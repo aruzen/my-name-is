@@ -32,11 +32,8 @@ const HueAreYouApp: React.FC = () => {
     setUserName(normalizedName)
 
     await saveHueAreYouResult({
-      user_name: normalizedName,
-      record: {
-        name: normalizedName,
-        choice: assignments,
-      },
+      name: normalizedName,
+      choice: assignments,
     })
   }
 

@@ -75,10 +75,10 @@ func newHTTPHandler(pool *pgxpool.Pool) http.Handler {
 	hueGetService := service.NewHueGetService(hueRepo, sessionRepo)
 
 	mux := http.NewServeMux()
-	mux.Handle("/api/sign-in", handler.NewSignInHandler(signInService))
-	mux.Handle("/api/login", handler.NewLoginHandler(loginService))
-	mux.Handle("/api/hue-are-you/save-result", handler.NewHueSaveHandler(hueSaveService))
-	mux.Handle("/api/hue-are-you/get-data", handler.NewHueGetHandler(hueGetService))
+	mux.Handle("/api/sign-in", withCORS(handler.NewSignInHandler(signInService)))
+	mux.Handle("/api/login", withCORS(handler.NewLoginHandler(loginService)))
+	mux.Handle("/api/hue-are-you/save-result", withCORS(handler.NewHueSaveHandler(hueSaveService)))
+	mux.Handle("/api/hue-are-you/get-data", withCORS(handler.NewHueGetHandler(hueGetService)))
 
 	return mux
 }
@@ -92,4 +92,21 @@ func serverAddr() string {
 		return port
 	}
 	return ":" + port
+}
+
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// Preflight
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

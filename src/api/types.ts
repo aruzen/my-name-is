@@ -19,10 +19,7 @@ export interface AdminSignInPayload {
   password: string
 }
 
-export interface SaveHueAreYouResultPayload {
-  user_name: string
-  record: HueAreYouRecord
-}
+export type SaveHueAreYouResultPayload = HueAreYouRecord
 
 export interface FetchHueAreYouDataParams {
   session: SessionData
