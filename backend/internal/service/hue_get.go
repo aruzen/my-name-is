@@ -15,14 +15,20 @@ import (
 type HueGetService struct {
 	hueRepo     *repository.HueRepository
 	sessionRepo *repository.LoginSessionRepository
+	userRepo    *repository.UserRepository
 	logger      *log.Logger
 }
 
-func NewHueGetService(hueRepo *repository.HueRepository, sessionRepo *repository.LoginSessionRepository, logger *log.Logger) *HueGetService {
+func NewHueGetService(hueRepo *repository.HueRepository, sessionRepo *repository.LoginSessionRepository, userRepo *repository.UserRepository, logger *log.Logger) *HueGetService {
 	if logger == nil {
 		logger = log.Default()
 	}
-	return &HueGetService{hueRepo: hueRepo, sessionRepo: sessionRepo, logger: logger}
+	return &HueGetService{
+		hueRepo:     hueRepo,
+		sessionRepo: sessionRepo,
+		userRepo:    userRepo,
+		logger:      logger,
+	}
 }
 
 func (s *HueGetService) GetData(ctx context.Context, session domain.SessionData, recordRange domain.RecordRange) ([]domain.HueRecord, error) {
@@ -42,6 +48,21 @@ func (s *HueGetService) GetData(ctx context.Context, session domain.SessionData,
 			s.logError("cleanup expired session", delErr)
 		}
 		return nil, domain.ErrExpiredToken
+	}
+
+	user, err := s.userRepo.FindByID(ctx, session.UserID())
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			s.logError("user not found", err)
+			return nil, domain.ErrInvalidLoginSession
+		}
+		s.logError("find user by id", err)
+		return nil, err
+	}
+
+	if user.Role() != domain.UserRoleAdmin {
+		s.logError("non-admin access", domain.ErrInvalidLoginSession)
+		return nil, domain.ErrInvalidLoginSession
 	}
 
 	records, err := s.hueRepo.FindRange(ctx, recordRange)

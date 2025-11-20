@@ -72,7 +72,7 @@ func newHTTPHandler(pool *pgxpool.Pool, logger *log.Logger) http.Handler {
 	signInService := service.NewSignInService(userRepo, sessionRepo, logger)
 	loginService := service.NewLoginService(userRepo, sessionRepo, logger)
 	hueSaveService := service.NewHueSaveService(hueRepo, logger)
-	hueGetService := service.NewHueGetService(hueRepo, sessionRepo, logger)
+	hueGetService := service.NewHueGetService(hueRepo, sessionRepo, userRepo, logger)
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/sign-in", withCORS(handler.NewSignInHandler(signInService)))
