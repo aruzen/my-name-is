@@ -55,10 +55,10 @@ const ToySpace = () => {
       />
 
       <ToyResults toys={filteredToys} />
-      <ToyCTASection />
     </main>
   )
 }
+//<ToyCTASection />
 
 interface ToySearchPanelProps {
   query: string
@@ -188,6 +188,7 @@ const ToyResults = ({ toys }: { toys: typeof toyEntries }) => (
   </section>
 )
 
+// 未実装
 const ToyCTASection = () => (
   <section className="toyspace-cta">
     <div>
